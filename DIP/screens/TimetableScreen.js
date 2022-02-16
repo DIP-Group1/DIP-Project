@@ -1,22 +1,17 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { Spacer, Center, NativeBaseProvider} from "native-base";
-import DeadlineCard from '../components/DeadlineCard';
-import TaskCard from '../components/TaskCard';
-import EventCard from '../components/EventCard';
+import timetableTopTabs from '../navigation/timetableTopTabs';
 
 const TimetableScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
-          <NativeBaseProvider>
-            <Spacer/>
-            <EventCard/>
-            <Spacer/>
-            <DeadlineCard/>
-            <Spacer/>
-            <TaskCard/>
-            <Spacer/>
-          </NativeBaseProvider>
+          <NavigationContainer>
+            <timetableTopTabs/>
+          </NavigationContainer>
+            <Text>
+              Something is supposed to be here
+            </Text>
         </View>   
     );
 };
