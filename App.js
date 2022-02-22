@@ -12,7 +12,7 @@ import GwennModal from './GwennModal';
 const App = () => {
   return (
     <NavigationContainer>
-      <GwennModal/>
+      <AddCategory/>
     </NavigationContainer>
   );
 }
