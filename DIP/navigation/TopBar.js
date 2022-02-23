@@ -41,7 +41,9 @@ function MyTabs() {
 export default function TopBar() {
   return (
     <NavigationContainer independent={true}>
-
+      <Text>
+        This space is reserved
+      </Text>
       <MyTabs />
     </NavigationContainer>
   );
