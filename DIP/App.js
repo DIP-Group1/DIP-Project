@@ -7,7 +7,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AddCategory from './AddCategory';
 import AddDeadline from './AddDeadline';
 import AddTask from './AddTask';
-import GwennModal from './GwennModal';
 
 const App = () => {
   return (

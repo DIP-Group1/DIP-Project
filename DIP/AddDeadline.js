@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, TextInput, Text, View, Button, Dimensions, Image } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack"
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { SafeAreaView, ScrollView, StyleSheet, TextInput, Text, View, Button, Dimensions, Image, TouchableOpacity } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Modal from "react-native-modalbox";
 

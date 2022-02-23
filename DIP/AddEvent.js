@@ -1,13 +1,15 @@
+import { StatusBar } from 'expo-status-bar';
 import React from "react";
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, TextInput, Text, View, Button, Dimensions, Image } from "react-native";
+import { TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, TextInput, Text, View, Button,
+   Dimensions, Image, Platform, Date } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import Modal from "react-native-modalbox";
 
 const AddEvent = () => {
-  const [name, onChangeName] = React.useState(null);
+  const [name, onChangeName] = React.useState(null); 
   const [AddInfo, onChangeInfo] = React.useState(null);
   const [Location, onChangeLocation] = React.useState(null);
   const [Date, onChangeDate] = React.useState(null);
@@ -18,18 +20,18 @@ const AddEvent = () => {
   
   const categoryList = ["Category1", "Category2", "Category3"];
   const reminderList = ["No Reminder",
-  "At time of event",
-  "5 minutes before",
-  "15 minutes before",
-  "30 minutes before",
-  "45 minutes before",
-  "1 hour before",
-  "2 hours before",
-  "1 day before",
-  "2 days before",
-  "3 days before",
-  "4 days before", 
-  "5 days before",
+    "At time of event",
+    "5 minutes before",
+    "15 minutes before",
+    "30 minutes before",
+    "45 minutes before",
+    "1 hour before",
+    "2 hours before",
+    "1 day before",
+    "2 days before",
+    "3 days before",
+    "4 days before", 
+    "5 days before",
     "1 week before"
   ]
   const [modalCategoryVisible, setModalCategoryVisible] = useState(false);
@@ -38,9 +40,9 @@ const AddEvent = () => {
   const [reminder, setReminder] = useState("");
 
   let ListCategory=categoryList.map((item,index)=>{
-    return <TouchableOpacity style={styles.buttonStyle} onPress={() => {setCategory(item);setModalCategoryVisible(false)}}>
-      <Text style={{ fontSize: 14 }} key="{item}">{item}</Text>
-   </TouchableOpacity>
+    return <TouchableOpacity style={styles.buttonStyle} onPress={() => { setCategory(item);setModalCategoryVisible(false); console.log({item})}}> 
+        <Text style={{ fontSize: 14 }}>{item}</Text>
+  </TouchableOpacity>
   })
 
   let ListReminders=reminderList.map((item,index)=>{
@@ -49,7 +51,7 @@ const AddEvent = () => {
           source={require('./assets/alarm.png')} style={{width: 15, height: 15}} 
           // style={styles.ImageIconStyle}
           />
-        <Text style={{ marginLeft:10, fontSize: 14 }} key="{item}">{item}</Text>
+        <Text style={{ marginLeft:10, fontSize: 14 }}>{item}</Text>
       </TouchableOpacity> 
   })
 
@@ -61,6 +63,7 @@ const AddEvent = () => {
         backdropPressToClose={true}
         isOpen={modalCategoryVisible}
         style={styles.modalBox}
+        // onPress={() => setModalCategoryVisible(false)}
         onClosed={() => setModalCategoryVisible(false)}
       >
         <View style={styles.content}>            
@@ -78,128 +81,130 @@ const getModalReminder = () =>{
       backdropPressToClose={true}
       isOpen={modalReminderVisible}
       style={styles.modalBox}
+      propagateSwipe={true}
       onClosed={() => setModalReminderVisible(false)}
-      // propagateSwipe={true}
-      // ScrollViewProps={true}
-      // onPress={() => setModalReminderVisible(false)}
+      ScrollViewProps={true}
+      onPress={() => setModalReminderVisible(false)}
     >
+      <View style={{flex:1}}>
         <ScrollView style={styles.modalScroll}> 
           {ListReminders}
           <TouchableOpacity style={styles.closeButtonStyle} onPress={() => setModalReminderVisible(false)}>
             <Text style={{ color: '#6568A6'}}>x Close</Text>
           </TouchableOpacity> 
         </ScrollView>
+      </View>
         
     </Modal>
   );
 };
 
+
+
   return (
-    <SafeAreaView>
-      <ScrollView nestedScrollEnabled style={styles.scrollView}>
-      <View>
+    <View style={{flex:1}}>
+      <SafeAreaView>
+        <ScrollView nestedScrollEnabled style={styles.scrollView}>
+        <View>
+          <Text
+            style={styles.Title}>
+            Adding Event
+          </Text>
+        </View>
+        <View style={styles.HeaderBorder}/>
+
         <Text
-          style={styles.Title}>
-          Adding Event
+          style={styles.Heading}>
+          Name
         </Text>
-      </View>
-      <View style={styles.HeaderBorder}/>
-
-      <Text
-        style={styles.Heading}>
-        Name
-      </Text>
-      <TextInput
-        style={styles.Input}
-        onChangeText={onChangeName}
-        value={name}
-        placeholder="e.g. Work / Study"
-        keyboardType="default"
-      />
-      <Text
-        style={styles.Heading}>
-        Location:
-      </Text>
-      <TextInput
-        style={styles.Input}
-        onChangeText={onChangeLocation}
-        value={Location}
-        placeholder="e.g. Hive"
-        keyboardType="default"
-      />
-      <Text
-        style={styles.Heading}>
-        Date:
-      </Text>
-      <TouchableOpacity style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 13, justifyContent: 'center'}}>
-        <Text>  Select Date</Text>
-      </TouchableOpacity>
-      {/* <TextInput
-        style={styles.Input}
-        onChangeText={onChangeDate}
-        value={Date}
-        placeholder="Select Date"
-        keyboardType="default"
-      /> */}
-
-      <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{marginTop: 10, width: '50%', fontWeight: 'bold', height: 20}}>From:</Text>
-          <Text style={{marginTop: 10, width: '50%', fontWeight: 'bold', height: 20}}>To:</Text>
-        </View>
-      </View>
-
-      <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13, marginRight: 13}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-          <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 17, marginBottom: 10, justifyContent: 'center'}}>
-            <Text>  Start Time</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 1, marginBottom: 10, justifyContent: 'center'}}>
-            <Text>  End Time</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <Text
-        style={styles.Heading}>
-        Category:
-      </Text>
-
-        <TouchableOpacity 
-        style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 11, justifyContent: 'center'}} 
-        onPress={() => setModalCategoryVisible(true)}>
-          <Text>  Select Category</Text>
+        <TextInput
+          style={styles.Input}
+          onChangeText={onChangeName}
+          value={name}
+          placeholder="e.g. Work / Study"
+          keyboardType="default"
+        />
+        <Text
+          style={styles.Heading}>
+          Location:
+        </Text>
+        <TextInput
+          style={styles.Input}
+          onChangeText={onChangeLocation}
+          value={Location}
+          placeholder="e.g. Hive"
+          keyboardType="default"
+        />
+        <Text
+          style={styles.Heading}>
+          Date:
+        </Text>
+        <TouchableOpacity style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 13, justifyContent: 'center'}}>
+          <Text>  Select Date</Text>
         </TouchableOpacity>
-        {getModalCategory()}
 
-      <Text
-        style={styles.Heading}>
-        Reminder:
-      </Text>
-      <TouchableOpacity 
-      style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 11, justifyContent: 'center'}}
-      onPress={() => setModalReminderVisible(true)}>
-        <Text>  Select Reminder</Text>
-      </TouchableOpacity>
-      {getModalReminder()}
+        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{marginTop: 10, width: '50%', fontWeight: 'bold', height: 20}}>From:</Text>
+            <Text style={{marginTop: 10, width: '50%', fontWeight: 'bold', height: 20}}>To:</Text>
+          </View>
+        </View>
 
-      <Text
-        style={styles.Heading}>
-        Remarks:
-      </Text>
-      <TextInput
-        style={styles.longInput}
-        onChangeText={onChangeRemarks}
-        value={Remarks}
-        placeholder="Details (e.g. items to bring along)"
-        keyboardType="default"
-      />
+        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13, marginRight: 13}}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 17, marginBottom: 10, justifyContent: 'center'}}>
+              <Text>  Start Time</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 1, marginBottom: 10, justifyContent: 'center'}}>
+              <Text>  End Time</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      <TouchableOpacity style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+        <Text
+          style={styles.Heading}>
+          Category:
+        </Text>
+
+          <TouchableOpacity 
+          style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 11, justifyContent: 'center'}} 
+          onPress={() => setModalCategoryVisible(true)}>
+            {category==''?<Text>  Select Category</Text>:<Text>  {category}</Text>}
+          </TouchableOpacity>
+          {/* {getModalCategory()} */}
+
+        <Text
+          style={styles.Heading}>
+          Reminder:
+        </Text>
+        <TouchableOpacity 
+        style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 11, justifyContent: 'center'}}
+        onPress={() => setModalReminderVisible(true)}>
+          {reminder==''?<Text>  Select Reminder</Text>:<Text>  {reminder}</Text>}
+        </TouchableOpacity>
+      
+
+        <Text
+          style={styles.Heading}>
+          Remarks:
+        </Text>
+        <TextInput
+          style={styles.longInput}
+          onChangeText={onChangeRemarks}
+          value={Remarks}
+          placeholder="Details (e.g. items to bring along)"
+          keyboardType="default"
+        />
+
+        <TouchableOpacity style={styles.saveButton}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+       {getModalCategory()}
+       {getModalReminder()}
+    </View>
+   
   );
 };
 
@@ -243,11 +248,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#C4C4C4',
     borderBottomWidth: 1,
   },
-  // Description: {
-  //   height: 20,
-  //   alignItems: 'center',
-  //   color: '#C4C4C4',
-  // },
   Title: {
     height: 30,
     margin: 12,
@@ -324,9 +324,6 @@ const styles = StyleSheet.create({
     //fontWeight: "bold",
     padding: 10,
   },
-  scrollView: {
-    // flex: 1,
-  }
 });
 
 export default AddEvent;

@@ -1,8 +1,7 @@
 import React from "react";
 import { useState } from 'react';
-import { SafeAreaView, StyleSheet, TextInput, Text, View, Button, Dimensions, Image } from "react-native";
+import { SafeAreaView, StyleSheet, TextInput, Text, View, Button, Dimensions, Image, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 import Modal from "react-native-modalbox";
 
@@ -13,85 +12,6 @@ import AddTask from './AddTask';
 function AddCategory( {navigation} ) {
   const [name, onChangeName] = React.useState(null);
   const [AddInfo, onChangeInfo] = React.useState(null);
-
-  
-  const categoryList = ["Category1", "Category2", "Category3"];
-  const reminderList = ["No Reminder",
-    "At time of event",
-    "5 minutes before",
-    "15 minutes before",
-    "30 minutes before",
-    "45 minutes before",
-    "1 hour before",
-    "2 hours before",
-    "1 day before",
-    "2 days before",
-    "3 days before",
-    "4 days before", 
-    "5 days before",
-    "1 week before"
-  ]
-  const [modalCategoryVisible, setModalCategoryVisible] = useState(false);
-  const [modalReminderVisible, setModalReminderVisible] = useState(false);
-  const [category, setCategory] = useState("");
-  const [reminder, setReminder] = useState("");
-
-  let ListCategory=categoryList.map((item,index)=>{
-    return <TouchableOpacity style={styles.buttonStyle} onPress={() => {setCategory(item);setModalCategoryVisible(false)}}>
-      <Text style={{ fontSize: 14 }}>{item}</Text>
-   </TouchableOpacity>
-  })
-
-  let ListReminders=reminderList.map((item,index)=>{
-    return <TouchableOpacity style={styles.buttonStyle} onPress={() => {setReminder(item); setModalReminderVisible(false)}}>
-        <Image
-          source={require('./assets/alarm.png')} style={{width: 15, height: 15}} 
-          // style={styles.ImageIconStyle}
-          />
-        <Text style={{ marginLeft:10, fontSize: 14 }}>{item}</Text>
-      </TouchableOpacity> 
-  })
-
-  const getModalCategory = () =>{
-    return (
-      
-      <Modal
-        entry="bottom"
-        backdropPressToClose={true}
-        isOpen={modalCategoryVisible}
-        style={styles.modalBox}
-        onClosed={() => setModalCategoryVisible(false)}
-      >
-        <View style={styles.content}>            
-          {ListCategory}
-          <Button title='x Close' color={'#6568A6'} onPress={() => setModalCategoryVisible(false)} />
-        </View>
-      </Modal>
-    );
-};
-
-const getModalReminder = () =>{
-  return (
-    <Modal
-      entry="bottom"
-      backdropPressToClose={true}
-      isOpen={modalReminderVisible}
-      style={styles.modalBox}
-      // propagateSwipe={true}
-      onClosed={() => setModalReminderVisible(false)}
-      // ScrollViewProps={true}
-      onPress={() => setModalReminderVisible(false)}
-    >
-      <ScrollView style={styles.modalScroll}> 
-          {ListReminders}
-          <TouchableOpacity style={styles.closeButtonStyle} onPress={() => setModalReminderVisible(false)}>
-            <Text style={{ color: '#6568A6'}}>x Close</Text>
-          </TouchableOpacity> 
-      </ScrollView>
-        
-    </Modal>
-  );
-};
 
   return (
 
