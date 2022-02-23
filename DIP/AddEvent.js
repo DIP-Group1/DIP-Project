@@ -224,6 +224,7 @@ const AddEvent = () => {
           value={Remarks}
           placeholder="Details (e.g. items to bring along)"
           keyboardType="default"
+          multiline={true} // ios top-left align
         />
 
         <TouchableOpacity style={styles.saveButton}>
@@ -263,6 +264,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#979797',
     borderRadius: 8,
+    textAlignVertical: 'top', // android top-left align
   },
   Heading: {
     height: 20,

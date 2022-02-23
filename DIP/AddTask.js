@@ -191,7 +191,7 @@ const AddTask = () => {
         onPress={() => setModalReminderVisible(true)}>
           {reminder==''?<Text>  Select Reminder</Text>:<Text>  {reminder}</Text>}
         </TouchableOpacity>
-        
+
         <Text
           style={styles.Heading}>
           Remarks:
@@ -202,6 +202,7 @@ const AddTask = () => {
           value={Remarks}
           placeholder="Details (e.g. items to bring along)"
           keyboardType="default"
+          multiline={true}
         />
         <TouchableOpacity style={styles.saveButton}>
           <Text style={styles.saveButtonText}>Save</Text>
@@ -240,6 +241,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: '#979797',
     borderRadius: 8,
+    textAlignVertical: 'top', // android top-left align
   },
   Heading: {
     height: 20,
