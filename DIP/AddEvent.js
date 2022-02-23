@@ -2,22 +2,19 @@ import { StatusBar } from 'expo-status-bar';
 import React from "react";
 import { useState } from 'react';
 import { TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, TextInput, Text, View, Button,
-   Dimensions, Image, Platform, Date } from "react-native";
+   Dimensions, Image, Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import Modal from "react-native-modalbox";
 
 const AddEvent = () => {
+  // base const
   const [name, onChangeName] = React.useState(null); 
-  const [AddInfo, onChangeInfo] = React.useState(null);
   const [Location, onChangeLocation] = React.useState(null);
-  const [Date, onChangeDate] = React.useState(null);
-  const [Category, onChangeCategory] = React.useState(null);
-  const [Reminder, onChangeReminder] = React.useState(null);
   const [Remarks, onChangeRemarks] = React.useState(null);
-
   
+  // category/reminder const & declaration
   const categoryList = ["Category1", "Category2", "Category3"];
   const reminderList = ["No Reminder",
     "At time of event",
@@ -63,7 +60,6 @@ const AddEvent = () => {
         backdropPressToClose={true}
         isOpen={modalCategoryVisible}
         style={styles.modalBox}
-        // onPress={() => setModalCategoryVisible(false)}
         onClosed={() => setModalCategoryVisible(false)}
       >
         <View style={styles.content}>            
@@ -72,33 +68,64 @@ const AddEvent = () => {
         </View>
       </Modal>
     );
-};
+  };
 
-const getModalReminder = () =>{
-  return (
-    <Modal
-      entry="bottom"
-      backdropPressToClose={true}
-      isOpen={modalReminderVisible}
-      style={styles.modalBox}
-      propagateSwipe={true}
-      onClosed={() => setModalReminderVisible(false)}
-      ScrollViewProps={true}
-      onPress={() => setModalReminderVisible(false)}
-    >
-      <View style={{flex:1}}>
-        <ScrollView style={styles.modalScroll}> 
-          {ListReminders}
-          <TouchableOpacity style={styles.closeButtonStyle} onPress={() => setModalReminderVisible(false)}>
-            <Text style={{ color: '#6568A6'}}>x Close</Text>
-          </TouchableOpacity> 
-        </ScrollView>
-      </View>
-        
-    </Modal>
-  );
-};
+  const getModalReminder = () =>{
+    return (
+      <Modal
+        entry="bottom"
+        backdropPressToClose={true}
+        isOpen={modalReminderVisible}
+        style={styles.modalBox}
+        propagateSwipe={true}
+        onClosed={() => setModalReminderVisible(false)}
+        ScrollViewProps={true}
+        onPress={() => setModalReminderVisible(false)}
+      >
+        <View style={{flex:1}}>
+          <ScrollView style={styles.modalScroll}> 
+            {ListReminders}
+            <TouchableOpacity style={styles.closeButtonStyle} onPress={() => setModalReminderVisible(false)}>
+              <Text style={{ color: '#6568A6'}}>x Close</Text>
+            </TouchableOpacity> 
+          </ScrollView>
+        </View>
+          
+      </Modal>
+    );
+  };
 
+
+  // datetimepicker const
+  const [mode,setMode]= useState('date');
+  const [show,setShow]= useState(false);
+  const [date, setDate]= useState(new Date(Date.now()));
+  const [dateText,setDateText]= useState('Select Date');
+  const [timeStart,setTimeStart]= useState('Start Time');
+  const [timeEnd,setTimeEnd]= useState('End Time');
+  // const [text,setText]= useState('  Empty');
+  const [timeType, setTimeType] = useState('');
+  const [dateType, setDateType] = useState('');
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+  const onChange = (event, selectedDate)=> {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+
+    let tempDate = new Date(currentDate);
+    let fDate = tempDate.getDate()+'/'+(tempDate.getMonth()+1)+'/'+tempDate.getFullYear();
+    let fTime = tempDate.getHours() + ':' + tempDate.getMinutes();
+    // setDateText(fDate);
+    {timeType == 'Date' ? setDateText(fDate) : null};
+    {timeType == 'Start' ? setTimeStart(fTime) : null};
+    {timeType == 'End' ? setTimeEnd(fTime) : null};
+
+    console.log(fDate+"("+fTime+")"+"("+sTime+")")
+  };
 
 
   return (
@@ -115,7 +142,7 @@ const getModalReminder = () =>{
 
         <Text
           style={styles.Heading}>
-          Name
+          Name:
         </Text>
         <TextInput
           style={styles.Input}
@@ -139,8 +166,9 @@ const getModalReminder = () =>{
           style={styles.Heading}>
           Date:
         </Text>
-        <TouchableOpacity style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 13, justifyContent: 'center'}}>
-          <Text>  Select Date</Text>
+        <TouchableOpacity style={{height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, margin: 13, justifyContent: 'center'}}
+        onPress={()=>{ setTimeType("Date"); showMode('date')} }>
+          <Text>  {dateText}</Text>
         </TouchableOpacity>
 
         <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13}}>
@@ -152,11 +180,13 @@ const getModalReminder = () =>{
 
         <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center', marginLeft: 13, marginRight: 13}}>
           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 17, marginBottom: 10, justifyContent: 'center'}}>
-              <Text>  Start Time</Text>
+            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 17, marginBottom: 10, justifyContent: 'center'}}
+            onPress={()=> {setTimeType("Start"); showMode('time')}}>
+              <Text>  {timeStart}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 1, marginBottom: 10, justifyContent: 'center'}}>
-              <Text>  End Time</Text>
+            <TouchableOpacity style={{width: 170, height: 25, backgroundColor: '#C4C4C4', borderRadius: 5, marginRight: 1, marginBottom: 10, justifyContent: 'center'}}
+            onPress={()=>{setTimeType("End"); showMode('time')}}>
+              <Text>  {timeEnd}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -201,10 +231,19 @@ const getModalReminder = () =>{
         </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
+        {show && (
+          <DateTimePicker
+          testID='dateTimePicker'
+          value={date}
+          mode = {mode}
+          is24Hour = {true}
+          display='default'
+          onChange={onChange}
+          />
+        )}
        {getModalCategory()}
        {getModalReminder()}
     </View>
-   
   );
 };
 
@@ -324,6 +363,17 @@ const styles = StyleSheet.create({
     //fontWeight: "bold",
     padding: 10,
   },
+  scrollView: {
+    // flex: 1,
+  },
+  timeContainer: {
+    flex: 1,
+    backgroundColor: '#e2e2e2',
+    justifyContent: 'center',
+  },
+  posttext:{
+    textAlign:'center'
+  }
 });
 
 export default AddEvent;
