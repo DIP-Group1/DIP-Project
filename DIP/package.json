@@ -25,7 +25,7 @@
     "react-native": "0.64.3",
     "react-native-data-forms": "^2.1.4",
     "react-native-gesture-handler": "~2.1.0",
-    "react-native-modalbox": "1.7.1",
+    "react-native-modalbox": "^1.7.1",
     "react-native-modalize": "^2.0.13",
     "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "3.3.2",
@@ -35,8 +35,7 @@
     "react-navigation-stack": "^2.10.4",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
-    "tcomb-form-native": "^0.6.20",
-    "@react-native-community/datetimepicker": "4.0.0"
+    "tcomb-form-native": "^0.6.20"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
