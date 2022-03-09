@@ -46,18 +46,9 @@ const mDay = moment().format('dddd').substring(0,3).toUpperCase;
 export default function TopBar() {
   return (
     <NavigationContainer independent={true}>
-      <Box alignItems="center" width="350px" borderWidth="1" borderColor="#CA9481" shadow="3" bg="#CA9481" p="5" rounded="8">
-        <HStack>
-          <Text>
-            {mDay}
-          </Text>
-        </HStack>
-        <HStack>
-          <Text>
-            {mDay}
-          </Text>
-        </HStack>
-      </Box>
+        <Text>
+          {mDay}
+        </Text>
       <MyTabs />
     </NavigationContainer>
   );
