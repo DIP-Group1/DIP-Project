@@ -5,6 +5,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import TimeTableContainer from '../components/TimeTableContainer';
 import TodoContainer from '../components/TodoContainer';
 import TodayContainer from '../components/TodayContainer';
+import Moment from 'react-moment';
+import moment from 'moment';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -38,12 +40,24 @@ function MyTabs() {
     </Tab.Navigator>
   );
 }
+
+const mDay = moment().format('dddd').substring(0,3).toUpperCase;
+
 export default function TopBar() {
   return (
     <NavigationContainer independent={true}>
-      <Text>
-        This space is reserved
-      </Text>
+      <Box alignItems="center" width="350px" borderWidth="1" borderColor="#CA9481" shadow="3" bg="#CA9481" p="5" rounded="8">
+        <HStack>
+          <Text>
+            {mDay}
+          </Text>
+        </HStack>
+        <HStack>
+          <Text>
+            {mDay}
+          </Text>
+        </HStack>
+      </Box>
       <MyTabs />
     </NavigationContainer>
   );
