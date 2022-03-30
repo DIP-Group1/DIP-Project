@@ -10,6 +10,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import {useState, useEffect} from "react";
 import {db} from '../firebase_config';
 import {collection, getDocs, addDoc, doc, deleteDoc} from 'firebase/firestore';
+<<<<<<< Updated upstream
+=======
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, getAuth, onAuthStateChanged} from "firebase/auth"
+import { TextComponent } from 'react-native';
+>>>>>>> Stashed changes
 
 // import auth
 // import auth from "@react-native-firebase/auth"
@@ -70,6 +75,7 @@ function LoginScreen({navigation}) {
 }
 
 function SignUpScreen({navigation}) {
+<<<<<<< Updated upstream
   const [newUsername, setNewUsername]= useState("")
   const [newPassword, setNewPassword]= useState("")
   const [newEmail, setNewEmail]= useState("")
@@ -83,6 +89,99 @@ function SignUpScreen({navigation}) {
   //     console.error(e.message);
   //   }
   // }
+=======
+  const [firstName, setFirstName]= useState("")
+  const [lastName, setLastName]= useState("")
+  const [password, setPassword]= useState("")
+  const [confirmPassword, setConfirmPassword]= useState("")
+  const [email, setEmail]= useState("")
+  const userDetailsCollectionRef = collection(db, "UserDetails");
+  const [test, setTest] = useState('')
+  const[username, setUsername] = useState('')
+  
+  const emptyState = () => {
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
+  const registerUser = () => {
+    createUserWithEmailAndPassword(authentication, email, password)
+    .then((re)=>{
+      console.log(re);
+    })
+    .catch((re)=>{
+      console.log(re);
+    })
+  }
+
+  const createProfile = async () => {
+    await addDoc(userDetailsCollectionRef,
+        {
+            Email: email, 
+            FirstName: firstName,
+            LastName: lastName,
+            Password: password,
+        }
+        );
+    setUserProfile();
+  };
+  const setUserProfile = () => {
+    const auth = getAuth();
+    setUsername(firstName+' '+lastName)
+    // dName = firstName;
+    console.log(username)
+    updateProfile(auth.currentUser, {
+      displayName: username , 
+    }).then((re) => {
+      console.log(re)
+      // Profile updated!
+      // ...
+    }).catch((error) => {
+      // An error occurred
+      // ...
+    });
+  }
+
+  const handlePress = () => {
+    if (!firstName) {
+      Alert.alert('First name is required');
+    } else if (!email) {
+      Alert.alert('Email field is required.');
+    } else if (!password) {
+      Alert.alert('Password field is required.');
+    } else if (!password) {
+      Alert.alert('Password field is required.');
+    } else if (password.length<6) {
+      setPassword('');
+      Alert.alert('Password should be at least 6 characters.');
+    } else if (password !== confirmPassword) {
+      Alert.alert('Password does not match!');
+    } else {
+      //add to db
+      registerUser();
+      // registration(
+      //   email,
+      //   password,
+      //   lastName,
+      //   firstName,
+      // );
+      // navigation.navigate('Loading');
+      onAuthStateChanged(authentication, (user) => {
+        if (user) {
+          createProfile();
+          navigation.push('Me Screen');
+          emptyState();
+        } else {
+          // User is signed out
+          // ...
+        }
+      });
+
+    }
+  };
+>>>>>>> Stashed changes
   return (
     <SafeAreaView>
       <View>
@@ -136,7 +235,11 @@ function SignUpScreen({navigation}) {
           Already have an Account?
           <Text style={styles.ToggleText}> Login</Text>
         </Text>
+      </TouchableOpacity> 
+      <TouchableOpacity onPress={() => {setTest(firstName+' '+lastName)}}>
+        <Text>test</Text>
       </TouchableOpacity>
+      <Text>{test}</Text>
     </SafeAreaView>)
 }
 

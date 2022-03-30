@@ -23,6 +23,15 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Login from './LoginScreen'
 
+<<<<<<< Updated upstream
+=======
+//imports for db
+import {db, authentication} from '../firebase_config';
+import {collection, getDocs, addDoc, doc, deleteDoc, query, where,} from 'firebase/firestore';
+import {getAuth, signOut, onAuthStateChanged} from "firebase/auth"
+import { cond } from 'react-native-reanimated';
+
+>>>>>>> Stashed changes
 
 //data visualisation const
 const screenWidth = Dimensions.get("window").width;
@@ -62,11 +71,17 @@ function MeScreen({ navigation, route }) {
     const [userName, setUserName] = useState('Joyce Tan');
     const [userInfo1, setUserInfo1] = useState('NTU IEM year 3 Student');
     const [userInfo2, setUserInfo2] = useState('DIP Project');
+    const [userUID, setUserUID] = useState('');
+    const [profileDetails, setProfileDetails] = useState([]);
+
+    const userDetailsRef = collection(db, "User Details");
+    
 
     //login const
     const [modalLoginVisible, setModalLoginVisible] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
 
+<<<<<<< Updated upstream
     useEffect(() => {
       if (route.params?.newName) {
         setUserName(route.params.newName)
@@ -76,12 +91,97 @@ function MeScreen({ navigation, route }) {
       };
       if (route.params?.newInfo2) {
         setUserInfo2(route.params.newInfo2)
+=======
+    //sign out const
+    const SignOutUser = ()=>{
+      signOut(authentication)
+      .then((re)=>{
+        setLoggedIn(false);
+        console.log("logged out.")
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    }
+
+    // const setUserDetails = () =>{
+    //   //pull info from db
+    //   const q = query(userDetailsRef, where("Email", "==", userUID));
+    //   const querySnapshot = await getDocs(q);
+    //   querySnapshot.forEach((doc) => {
+    //     // doc.data() is never undefined for query doc snapshots
+    //     console.log(doc.id, " => ", doc.data());
+    //   }
+    // }
+    // useEffect(() => {
+    //   const getProfileDetails = async () => {
+    //     const auth = getAuth();
+    //     const user= auth.currentUser;
+    //     // if (user !== null) {
+    //     //   setLoggedIn(true);
+    //     //   user.providerData.forEach((profile) => {
+    //     //     console.log("Sign-in provider: " + profile.providerId);
+    //     //     console.log("  Provider-specific UID: " + profile.uid);
+    //     //     console.log("  Name: " + profile.displayName);
+    //     //     console.log("  Email: " + profile.email);
+    //     //     console.log("  Photo URL: " + profile.photoURL);
+    //     //     setUserUID(profile.email)
+    //     // });
+    //     const q = query(userDetailsRef, where("Email", "==", userUID));
+    //     const data = await getDocs(q);
+    //     setProfileDetails(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    //   };
+  
+    //   setInterval(() => {
+    //     getProfileDetails();
+    //     console.log(getProfileDetails);
+    //   }, 8000)
+    // },[]);
+
+    // useEffect(() => {
+    //   if (route.params?.newName) {
+    //     setUserName(route.params.newName)
+    //   };
+    //   if (route.params?.newInfo1) {
+    //     setUserInfo1(route.params.newInfo1)
+    //   };
+    //   if (route.params?.newInfo2) {
+    //     setUserInfo2(route.params.newInfo2)
+    //   };
+    //   if (route.params?.selectedImage) {
+    //     setSelectedImage(route.params.selectedImage)
+    //   }
+    // }, [route.params?.newName]);
+      const isLoggedin = async() =>{
+        const auth = getAuth();
+        const user= auth.currentUser;
+        if (user !== null) {
+          setLoggedIn(true);
+          user.providerData.forEach((profile) => {
+            console.log("Sign-in provider: " + profile.providerId);
+            console.log("  Provider-specific UID: " + profile.uid);
+            console.log("  Name: " + profile.displayName);
+            console.log("  Email: " + profile.email);
+            console.log("  Photo URL: " + profile.photoURL);
+            setUserUID(profile.email)
+          });
+          const q = query(userDetailsRef, where("Email", "==", userUID));
+          const data = await getDocs(q);
+          setProfileDetails(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        };
+
+        setInterval(() => {
+          isLoggedin();
+          console.log("profile details:")
+          // console.log(profileDetails.FirstName);
+        }, 10000)
+
+        console.log('state: ' , loggedIn)
+        return loggedIn;
+>>>>>>> Stashed changes
       };
-      if (route.params?.selectedImage) {
-        setSelectedImage(route.params.selectedImage)
-      }
-    }, [route.params?.newName]);
-    
+
+
     const getModalLogin = () =>{
       return (
         
@@ -94,6 +194,7 @@ function MeScreen({ navigation, route }) {
           onClosed={() => setModalLoginVisible(false)}
         >
           <View style={styles.content}> 
+            {loggedIn === false ?<Text>not logged in</Text>:<Text>logged in {userUID}</Text>}
             <Text style={{fontSize:17, alignSelf:'center'}}> Confirm Log Out?</Text>          
             <View style ={styles.modalButtons}> 
             <TouchableOpacity style={{padding:15, paddingTop:20}} onPress={() => navigation.push("Login Screen")}>
@@ -106,7 +207,7 @@ function MeScreen({ navigation, route }) {
           </View>
         </Modal>
       );
-    };
+    }
 
     return (
       <View style={{flex:1}}>
@@ -127,7 +228,7 @@ function MeScreen({ navigation, route }) {
                   <Text style={styles.info}> Edit </Text>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress= {() => setModalLoginVisible(true)}>
+              <TouchableOpacity onPress= {() => {setModalLoginVisible(true); isLoggedin()}}>
                 <Image
                     source={require('../assets/settings.png')}
                     resizeMode='contain'
@@ -177,6 +278,7 @@ function EditProfileScreen({route, navigation}) {
   const info2 = route.params.userInfo2;
   const [selectedImage, setSelectedImage] = useState(route.params.selectedImage);
   const [newName, setNewName] = useState('');
+  const [lastName,setLastName] = useState('');
   const [newInfo1, setNewInfo1] = useState('');
   const [newInfo2, setNewInfo2] = useState('');
   let openImagePickerAsync = async () => {
@@ -217,12 +319,23 @@ function EditProfileScreen({route, navigation}) {
       </TouchableOpacity>
       <Text
         style={styles.e_Heading}>
-        Name:
+        First Name:
       </Text>
       <TextInput
         style={styles.e_Input}
         onChangeText={setNewName}
         value={newName}
+        placeholder={user}
+        keyboardType="default"
+      />
+      <Text
+        style={styles.e_Heading}>
+        Last Name:
+      </Text>
+      <TextInput
+        style={styles.e_Input}
+        onChangeText={setLastName}
+        value={lastName}
         placeholder={user}
         keyboardType="default"
       />
