@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 // import * as React from 'react'
-import { Component, useState, useEffect } from 'react'
+// import { Component, useState, useEffect } from 'react'
 import {
     StyleSheet,
     Text,
@@ -23,21 +23,15 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import Login from './LoginScreen'
 
+import {useState, useEffect} from "react";
+import {db} from '../firebase_config';
+import {collection, getDocs, doc} from 'firebase/firestore';
 
-//data visualisation const
-const screenWidth = Dimensions.get("window").width;
-const data = {
-    labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
-    datasets: [
-      {
-        data: [2, 0, 4.5, 6, 1, 3, 2],
-        color: (opacity = 1) => '#FF7B00', // optional
-        // color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2 // optional
-      }
-    ],
-    // legend: ["Rainy Days"] // optional
-  };
+
+
+
+  const screenWidth = Dimensions.get("window").width;
+
   const chartConfig = {
     backgroundColor: '#FFFFFF',
     backgroundGradientFrom: "#FFFFFF",
@@ -55,7 +49,7 @@ const data = {
     decimalPlaces: 1,
     useShadowColorFromDataset: false // optional
   };
-  const tasksCompleted = 20
+
 
 function MeScreen({ navigation, route }) {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -66,6 +60,42 @@ function MeScreen({ navigation, route }) {
     //login const
     const [modalLoginVisible, setModalLoginVisible] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+
+    const [chart, setChart] = useState([]);
+    const chartCollectionRef = collection(db, "Chart");
+    useEffect(() => {
+      const getChart = async () => {
+        const data =  await getDocs(chartCollectionRef);
+        setChart(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      };
+        getChart();
+        console.log(chart);
+        console.log("displaying chart");
+    },[]);
+
+    ///////////////////////////////////////////////////////
+    // CAN READ FROM DB BUT NOT READING FAST ENOUGH     ///
+    // NEED TO FIND A WAY TO GET BELOW FUNCTIONS TO WAIT///
+    ///////////////////////////////////////////////////////
+    const data = {
+        labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
+        
+        datasets: [
+          {
+            data: [2, 0, 4,1,2,3,4],
+
+            
+            // data: chart.week,
+            
+            color: (opacity = 1) => '#FF7B00', // optional
+            // color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+            strokeWidth: 2 // optional
+          }
+        ],
+        tasksCompleted: 20,
+        // tasksCompleted: chart.weekTotal,
+        // legend: ["Rainy Days"] // optional
+      };
 
     useEffect(() => {
       if (route.params?.newName) {
@@ -147,7 +177,7 @@ function MeScreen({ navigation, route }) {
               <TouchableOpacity style={styles.touchableStyle}>
                 <Text style={styles.textStyle}>
                   Total Task Completed:   
-                  <Text style={styles.boldText}>  {tasksCompleted}  </Text>
+                  <Text style={styles.boldText}>  {data.tasksCompleted}  </Text>
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.touchableStyle}>
