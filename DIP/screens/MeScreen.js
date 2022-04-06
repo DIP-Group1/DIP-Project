@@ -79,6 +79,7 @@ function MeScreen({ navigation, route }) {
         const data =  await getDocs(chartCollectionRef);
         setChart(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       };
+      // setInterval(() => {
         getChart();
         console.log(charts);
         console.log(weekTotal);
@@ -91,7 +92,8 @@ function MeScreen({ navigation, route }) {
             setWeekTotal(chart.weekTotal)
           );
         })}
-
+      
+      // }, 5000)
 
     },[]);
 
@@ -99,19 +101,31 @@ function MeScreen({ navigation, route }) {
     // CAN READ FROM DB BUT NOT READING FAST ENOUGH     ///
     // NEED TO FIND A WAY TO GET BELOW FUNCTIONS TO WAIT///
     ///////////////////////////////////////////////////////
-
     const data = {
-        labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
+      labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
 
-        datasets: [
-          {
-            data: weekArray,
-            color: (opacity = 1) => '#FF7B00', // optional
-            strokeWidth: 2 // optional
-          }
-        ],
-      };
+      datasets: [
+        {
+          data: weekArray,
+          color: (opacity = 1) => '#FF7B00', // optional
+          strokeWidth: 2 // optional
+        }
+      ],
+    };
 
+    setInterval(() => {
+      const data = {
+          labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
+
+          datasets: [
+            {
+              data: weekArray,
+              color: (opacity = 1) => '#FF7B00', // optional
+              strokeWidth: 2 // optional
+            }
+          ],
+        };
+    }, 1000)
 
     useEffect(() => {
       if (route.params?.newName) {
@@ -154,6 +168,7 @@ function MeScreen({ navigation, route }) {
       );
     };
 
+    // useEffect(() => {
     return (
       <View style={{flex:1}}>
         <SafeAreaView style={styles.container}>
@@ -208,6 +223,7 @@ function MeScreen({ navigation, route }) {
               chartConfig={chartConfig}
               bezier
               />
+ 
             {/* </ScrollView> */}
         </View>
    
@@ -215,7 +231,9 @@ function MeScreen({ navigation, route }) {
       {getModalLogin()}
       </View>
     )
+  // }, []);
 };
+
 
 function EditProfileScreen({route, navigation}) {
   const user = route.params.userName;
