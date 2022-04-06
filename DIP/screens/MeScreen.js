@@ -71,7 +71,7 @@ function MeScreen({ navigation, route }) {
     const [userInfo2, setUserInfo2] = useState('');
 
     //for db
-    const [userUID, setUserUID] = useState('');
+    const [userUID, setUserUID] = useState('none');
     const [profileDetails, setProfileDetails] = useState([]);
     const userDetailsRef = collection(db, "UserDetails");
 
@@ -110,6 +110,9 @@ function MeScreen({ navigation, route }) {
     //chack auth if logged in
       app;
       const auth = getAuth();
+      // const user = auth.currentUser;
+      
+
       const isLoggedin = () =>{
         onAuthStateChanged(auth, user =>{
           if (user!=null){
@@ -121,6 +124,7 @@ function MeScreen({ navigation, route }) {
               console.log("  Email: " + profile.email);
               console.log("  Photo URL: " + profile.photoURL);
               setUserUID(profile.email)})
+              console.log('profile.email: '+userUID)
               // getProfile();
           }else{
             setLoggedIn(false);
@@ -128,32 +132,73 @@ function MeScreen({ navigation, route }) {
           }
         }) 
       }
-    //   setInterval(() => {
-    //     isLoggedin();
-    //     console.log(isLoggedin);
-    //   }, 8000)
-    // })
-    const getProfile = async() =>{
-      console.log('in.')
-      try {
-        const q = query(userDetailsRef, where("Email", "==", userUID));
-        const querySnapshot = await getDocs(q);
-        console.log('await.')
-        const data = querySnapshot.docs[0].data();
-        console.log(data)
-        setProfileDetails(data)
-        const temp = profileDetails.FirstName+' '+profileDetails.LastName
-        setUserName(temp)
-        setUserInfo1(profileDetails.Info1)
-        setUserInfo2(profileDetails.Info2)
-        console.log('firstname:'+ profileDetails.FirstName)
-        console.log('last:'+ profileDetails.LastName)
-        console.log('temp:'+ temp)
-        console.log('un:'+ userName)
-      } catch (err) {
-        console.error(err);
-        alert("An error occured while fetching user data");
-      }
+    
+      useEffect(() => {
+        const getProfile = async () => {
+          console.log('inside getProfile')
+          if (userUID!='none'){
+            console.log('userUID not null '+userUID)
+            const q = query(userDetailsRef, where("Email", "==", userUID));
+            const data =  await getDocs(q);
+            // setProfileDetails(data.docs[0].data)
+            // setProfileDetails(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+            
+            data.forEach((doc) => {
+              setProfileDetails(doc.data())
+              console.log(doc.id, ' => ', doc.data());
+          });
+          setProfile();
+          }
+        };
+        const setProfile =() =>{
+          const temp = profileDetails.FirstName+' '+profileDetails.LastName
+          setUserName(temp)
+          setUserInfo1(profileDetails.Info1)
+          setUserInfo2(profileDetails.Info2)
+        };
+          console.log('useeffect start.')
+          // isLoggedin();
+          console.log(userUID)
+          getProfile();
+          console.log(profileDetails);
+          console.log('1.'+profileDetails.FirstName);
+          console.log('2.'+profileDetails.LastName);
+          console.log("displaying chart");
+          
+          // {charts.map((chart) => {
+          //   return (
+          //     setWeekArray(chart.week),
+          //     setWeekTotal(chart.weekTotal)
+          //   );
+          // })}
+          setInterval(() => {
+            getProfile();
+            console.log(getProfile);
+          }, 8000)
+        },[]);
+  
+
+    // const getProfile = async () =>{
+    //   console.log('in.')
+    //   try {
+    //     const q = query(userDetailsRef, where("Email", "==", userUID));
+    //     const querySnapshot = await getDocs(q);
+    //     console.log('await.')
+    //     const data = querySnapshot.docs[0].data();
+    //     console.log(data)
+    //     setProfileDetails(data)
+    //     const temp = profileDetails.FirstName+' '+profileDetails.LastName
+    //     setUserName(temp)
+    //     setUserInfo1(profileDetails.Info1)
+    //     setUserInfo2(profileDetails.Info2)
+    //     console.log('firstname:'+ profileDetails.FirstName)
+    //     console.log('last:'+ profileDetails.LastName)
+    //     console.log('temp:'+ temp)
+    //     console.log('un:'+ userName)
+    //   } catch (err) {
+    //     console.error(err);
+    //     alert("An error occured while fetching user data");
+    //   }
       // querySnapshot.forEach((doc)=>{
       //   console.log('before set.')
       //   console.log(doc.id, " => ", doc.data());
@@ -167,7 +212,7 @@ function MeScreen({ navigation, route }) {
         //   console.log('failed.')
         // }
       // })
-    }//end const getprofile
+    // }//end const getprofile
     
     const getModalLogin = () =>{
       return (
