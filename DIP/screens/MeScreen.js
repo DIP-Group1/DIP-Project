@@ -24,10 +24,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Login from './LoginScreen'
 
 //imports for db
-import {db, authentication} from '../firebase_config';
-import {collection, getDocs, addDoc, doc, deleteDoc} from 'firebase/firestore';
-import { signOut} from "firebase/auth"
-
+import {db, authentication, app} from '../firebase_config';
+import {collection, getDocs, getDoc, addDoc, doc, deleteDoc, query, where,} from 'firebase/firestore';
+import {getAuth, signOut, onAuthStateChanged} from "firebase/auth"
 
 //data visualisation const
 const screenWidth = Dimensions.get("window").width;
@@ -64,9 +63,17 @@ const data = {
 
 function MeScreen({ navigation, route }) {
     const [selectedImage, setSelectedImage] = useState(null);
-    const [userName, setUserName] = useState('Joyce Tan');
-    const [userInfo1, setUserInfo1] = useState('NTU IEM year 3 Student');
-    const [userInfo2, setUserInfo2] = useState('DIP Project');
+    // const [userName, setUserName] = useState('Joyce Tan');
+    // const [userInfo1, setUserInfo1] = useState('NTU IEM year 3 Student');
+    // const [userInfo2, setUserInfo2] = useState('DIP Project');
+    const [userName, setUserName] = useState('');
+    const [userInfo1, setUserInfo1] = useState('');
+    const [userInfo2, setUserInfo2] = useState('');
+
+    //for db
+    const [userUID, setUserUID] = useState('');
+    const [profileDetails, setProfileDetails] = useState([]);
+    const userDetailsRef = collection(db, "UserDetails");
 
     //login const
     const [modalLoginVisible, setModalLoginVisible] = useState(false);
@@ -84,20 +91,83 @@ function MeScreen({ navigation, route }) {
       })
     }
 
-    useEffect(() => {
-      if (route.params?.newName) {
-        setUserName(route.params.newName)
-      };
-      if (route.params?.newInfo1) {
-        setUserInfo1(route.params.newInfo1)
-      };
-      if (route.params?.newInfo2) {
-        setUserInfo2(route.params.newInfo2)
-      };
-      if (route.params?.selectedImage) {
-        setSelectedImage(route.params.selectedImage)
+    // useEffect(() => {
+    //   if (route.params?.newName) {
+    //     setUserName(route.params.newName)
+    //   };
+    //   if (route.params?.newInfo1) {
+    //     setUserInfo1(route.params.newInfo1)
+    //   };
+    //   if (route.params?.newInfo2) {
+    //     setUserInfo2(route.params.newInfo2)
+    //   };
+    //   if (route.params?.selectedImage) {
+    //     setSelectedImage(route.params.selectedImage)
+    //   }
+    // }, [route.params?.newName]);
+    
+    // useEffect(()=>{
+    //chack auth if logged in
+      app;
+      const auth = getAuth();
+      const isLoggedin = () =>{
+        onAuthStateChanged(auth, user =>{
+          if (user!=null){
+            setLoggedIn(true);
+            user.providerData.forEach((profile) => {
+              console.log("Sign-in provider: " + profile.providerId);
+              console.log("  Provider-specific UID: " + profile.uid);
+              console.log("  Name: " + profile.displayName);
+              console.log("  Email: " + profile.email);
+              console.log("  Photo URL: " + profile.photoURL);
+              setUserUID(profile.email)})
+              // getProfile();
+          }else{
+            setLoggedIn(false);
+            navigation.push("Login Screen")
+          }
+        }) 
       }
-    }, [route.params?.newName]);
+    //   setInterval(() => {
+    //     isLoggedin();
+    //     console.log(isLoggedin);
+    //   }, 8000)
+    // })
+    const getProfile = async() =>{
+      console.log('in.')
+      try {
+        const q = query(userDetailsRef, where("Email", "==", userUID));
+        const querySnapshot = await getDocs(q);
+        console.log('await.')
+        const data = querySnapshot.docs[0].data();
+        console.log(data)
+        setProfileDetails(data)
+        const temp = profileDetails.FirstName+' '+profileDetails.LastName
+        setUserName(temp)
+        setUserInfo1(profileDetails.Info1)
+        setUserInfo2(profileDetails.Info2)
+        console.log('firstname:'+ profileDetails.FirstName)
+        console.log('last:'+ profileDetails.LastName)
+        console.log('temp:'+ temp)
+        console.log('un:'+ userName)
+      } catch (err) {
+        console.error(err);
+        alert("An error occured while fetching user data");
+      }
+      // querySnapshot.forEach((doc)=>{
+      //   console.log('before set.')
+      //   console.log(doc.id, " => ", doc.data());
+        
+        // setProfileDetails(doc.data())
+        // setProfileDetails(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+        // if (profileDetails!=null){
+        //   // console.log('profile details:'+ profileDetails)
+        //   // console.log('firstname:'+ profileDetails.FirstName)
+        // }else{
+        //   console.log('failed.')
+        // }
+      // })
+    }//end const getprofile
     
     const getModalLogin = () =>{
       return (
@@ -111,6 +181,7 @@ function MeScreen({ navigation, route }) {
           onClosed={() => setModalLoginVisible(false)}
         >
           <View style={styles.content}> 
+             {loggedIn === false ?<Text>not logged in</Text>:<Text>logged in {userUID}</Text>}
             <Text style={{fontSize:17, alignSelf:'center'}}> Confirm Log Out?</Text>          
             <View style ={styles.modalButtons}> 
             <TouchableOpacity style={{padding:15, paddingTop:20}} onPress={() => {SignOutUser(); navigation.push("Login Screen")}}>
@@ -119,12 +190,15 @@ function MeScreen({ navigation, route }) {
             <TouchableOpacity style={{padding:15, paddingTop:20}} onPress={() => setModalLoginVisible(false)}>
               <Text style={{fontSize:16, color:'#C4C4C4'}}>Cancel</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={{padding:15, paddingTop:20}} onPress={() => getProfile()}>
+              <Text style={{fontSize:16, color:'#C4C4C4'}}>Test</Text>
+            </TouchableOpacity>
             </View>
           </View>
         </Modal>
       );
     };
-
+    isLoggedin();
     return (
       <View style={{flex:1}}>
         <SafeAreaView style={styles.container}>
